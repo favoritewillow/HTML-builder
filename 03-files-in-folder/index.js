@@ -1,6 +1,8 @@
 const { readdir, stat } = require('fs/promises');
 const { join, extname } = require('path');
 
+const { stdout } = process;
+
 const secretFolder = './03-files-in-folder/secret-folder';
 
 async function printFileInfo() {
@@ -14,7 +16,7 @@ async function printFileInfo() {
         const fileName = (await file).name;
         const fileExtension = extname(fileName).slice(1);
         const fileSizeInKb = (fileSizeInBytes / 1024).toFixed(2);
-        console.log(`${fileName} - ${fileExtension} - ${fileSizeInKb}kb`);
+        stdout.write(`${fileName} - ${fileExtension} - ${fileSizeInKb}kb\n`);
       } else if (file.isDirectory()) {
         const dirPath = `${secretFolder}/${file.name}`;
         const dirFiles = await readdir(dirPath, { withFileTypes: true });
@@ -26,14 +28,14 @@ async function printFileInfo() {
             const fileName = (await dirFile).name;
             const fileExtension = extname(fileName).slice(1);
             const fileSizeInKb = (fileSizeInBytes / 1024).toFixed(2);
-            console.log(`${fileName} - ${fileExtension} - ${fileSizeInKb}kb`);
+            stdout.write(`${fileName} - ${fileExtension} - ${fileSizeInKb}kb`);
           }
         });
       }
     });
     await Promise.all(promises);
   } catch (err) {
-    console.error(err);
+    stdout.write.error(err);
   }
 }
 
